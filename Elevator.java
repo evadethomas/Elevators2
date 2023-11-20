@@ -17,6 +17,53 @@ public class Elevator {
         stopDown = new PriorityQueue<Passenger>(stopDownComparator);
     }
 
+    public void travel() {
+        int nextDestUp = ElevFloor + 5;
+        if (nextDestUp > Elevators2.floorNumber - 1) {
+            nextDestUp = Elevators2.floorNumber;
+        }
+        int nextDestDown = ElevFloor -5;
+        boolean noUp = true;
+        if (up == true) {
+            for (int i = ElevFloor + 1; i < nextDestUp; i++) {
+                if (elevatorSimulation.requests.get(i) == 1) {
+                    nextDestUp = i;
+                    noUp = false;
+                    break;
+                }
+                if (i == Elevators2.floorNumber - 1) {
+                    break;
+                }
+            }
+            if (!stopUp.isEmpty()) {
+                if (stopUp.peek().EndFloor < nextDestUp) {
+                    nextDestUp = stopUp.peek().EndFloor;
+                    noUp = false;
+                }
+            }
+        }
+        if (elevatorSimulation.maxFloor > Elevators2.floorNumber) {
+            noUp = false;
+        }
+
+        if (noUp != true && up == true) {
+            ElevFloor = nextDestUp;
+        }
+        /*
+        if (up == false || noUp == true) {
+            for (int i = ElevFloor - 1; i > ElevFloor - 5; i--) {
+                if (i == 0) {
+                    break;
+                }
+                if (elevatorSimulation.requests.get(i) == 1) {
+                    nextDestDown = i;
+                    break;
+                }
+            }
+        }
+        */
+    }
+
     public void loadAndUnload() {
         if (up == true) {
             unloadUp();
@@ -25,6 +72,7 @@ public class Elevator {
             unloadDown();
             loadDown();
         }
+        travel();
     }
 
     private void loadDown() {
@@ -33,7 +81,7 @@ public class Elevator {
         int passengersToTake = Elevators2.elevatorCapacity;
         if (floor.waitingDown.size() < Elevators2.elevatorCapacity) {
             passengersToTake = floor.waitingDown.size();
-            elevatorSimulation.arrivedAtFloorUp(ElevFloor);
+            elevatorSimulation.arrivedAtFloorDown(ElevFloor);
         }
         for (int i = 0; i < passengersToTake; i++) {
             Passenger pass = floor.waitingDown.remove(i);
@@ -62,11 +110,21 @@ public class Elevator {
     }
 
     public void unloadUp() {
-
+        //Let the passengers off that are going up with "poll" for priority queue
+        if (!stopUp.isEmpty()) {
+            while (!stopUp.isEmpty() && stopUp.peek().EndFloor == ElevFloor) {
+                stopUp.poll();
+            }
+        }
     }
 
     public void unloadDown() {
-
+        //Let the passengers off that are going down with "poll" for priority queue
+        if (!stopDown.isEmpty()) {
+            while (stopDown.peek().EndFloor == ElevFloor) {
+                stopDown.poll();
+            }
+        }
     }
 
     public void printElevatorUp() {

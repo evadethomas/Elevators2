@@ -47,7 +47,10 @@ public class elevatorSimulation extends Elevators2 {
             for (int i = 0; i < elevatorNumber; i++) {
                 elevatorList.get(i).loadAndUnload();
             }
+            elevatorList.get(0).printElevatorUp();
+            System.out.println("Current floor " + elevatorList.get(0).ElevFloor);
         }
+
 
     }
 
@@ -121,7 +124,6 @@ public class elevatorSimulation extends Elevators2 {
                 break;
             }
         }
-
     }
 
 
