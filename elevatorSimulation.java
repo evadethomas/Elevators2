@@ -41,13 +41,13 @@ public class elevatorSimulation extends Elevators2 {
     }
     public void runSimulation() {
         //Iterating through requested number of ticks from prop file
-
         for (currentTick = 0; currentTick < duration; currentTick++) {
             //Calling generate passenger for every tick
             generatePassengers();
+            for (int i = 0; i < elevatorNumber; i++) {
+                elevatorList.get(i).loadAndUnload();
+            }
         }
-        System.out.println(maxFloor);
-        System.out.println(minFloor);
 
     }
 
@@ -98,7 +98,7 @@ public class elevatorSimulation extends Elevators2 {
         }
     }
 
-    public static void arrivedAtFloor(int j) {
+    public static void arrivedAtFloorUp(int j) {
         //Switches floor that's been arrived at back to 0 when all passengers have been unloaded from floor
         requests.put(j, 0);
         //Resets the min
@@ -109,6 +109,12 @@ public class elevatorSimulation extends Elevators2 {
             }
         }
         //Resets the max
+
+    }
+    public static void arrivedAtFloorDown(int j) {
+        //Switches floor that's been arrived at back to 0 when all passengers have been unloaded from floor
+        requests.put(j, 0);
+        //Resets the max
         for (int k = floorNumber - 1; k >= 0; k--) {
             if (requests.get(k) == 1) {
                 maxFloor = k;
@@ -117,6 +123,7 @@ public class elevatorSimulation extends Elevators2 {
         }
 
     }
+
 
 
 
